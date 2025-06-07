@@ -6,6 +6,7 @@ import { loginWithEmailAndPassword } from "@/features/auth/api/login"
 import { logout } from "@/features/auth/api/logout"
 import type {
   AuthUserResponse,
+  LogoutResponse,
   UsersMeResponse,
 } from "@/features/auth/types/api"
 import type { LoginRequest } from "@/features/auth/types/form"
@@ -40,10 +41,16 @@ async function loginFn(dataForm: LoginRequest): Promise<UsersMeResponse> {
   return { data }
 }
 
+async function logoutFn(): Promise<LogoutResponse> {
+  const response = await logout()
+  Cookie.clearTokens()
+  return { data: response.data }
+}
+
 const authConfig = {
   userFn,
   loginFn,
-  logoutFn: logout,
+  logoutFn,
 }
 
 export const { useUser, useLogin, useLogout, AuthLoader } =
