@@ -1,10 +1,6 @@
 import { Navigate, useLocation } from "react-router"
 
 import { paths } from "@/config/paths"
-import { Cookie } from "@/utils/storage"
-
-import { configureAuth } from "./react-query-auth"
-
 import { getUser } from "@/features/auth/api/get-user"
 import { loginWithEmailAndPassword } from "@/features/auth/api/login"
 import { logout } from "@/features/auth/api/logout"
@@ -13,6 +9,9 @@ import type {
   UsersMeResponse,
 } from "@/features/auth/types/api"
 import type { LoginRequest } from "@/features/auth/types/form"
+import { Cookie } from "@/utils/storage"
+
+import { configureAuth } from "./react-query-auth"
 
 async function handleUserResponse(
   data: AuthUserResponse

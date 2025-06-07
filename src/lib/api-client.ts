@@ -3,9 +3,8 @@ import { toast } from "sonner"
 
 import { env } from "@/config/env"
 import { paths } from "@/config/paths"
-import { Cookie } from "@/utils/storage"
-
 import { refreshToken } from "@/features/auth/api/refresh-token"
+import { Cookie } from "@/utils/storage"
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
   if (config.headers) {
