@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   endOfLine: "auto",
   semi: false,
   singleQuote: false,
@@ -6,4 +6,4 @@ export default {
   trailingComma: "es5",
   plugins: ["prettier-plugin-tailwindcss"],
   tailwindFunctions: ["cva", "clsx"],
-};
+}
