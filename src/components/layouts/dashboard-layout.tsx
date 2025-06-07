@@ -2,6 +2,7 @@ import { Home, PanelLeft, User2 } from "lucide-react"
 import { useEffect, useState, type JSX } from "react"
 import { NavLink, useNavigate, useNavigation } from "react-router"
 
+import logo from "@/assets/logo.svg"
 import { Button } from "@/components/ui/button"
 import { paths } from "@/config/paths"
 import { useLogout } from "@/lib/auth"
@@ -16,8 +17,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown"
 import { Link } from "../ui/link"
-
-import logo from "@/assets/logo.svg"
 
 type SideNavigationItem = {
   name: string

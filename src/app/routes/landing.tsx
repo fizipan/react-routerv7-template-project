@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router"
 
+import logo from "@/assets/logo.svg"
 import { Head } from "@/components/seo"
 import { Button } from "@/components/ui/button"
 import { paths } from "@/config/paths"
 import { useUser } from "@/lib/auth"
-
-import logo from "@/assets/logo.svg"
 
 const LandingRoute = () => {
   const navigate = useNavigate()
