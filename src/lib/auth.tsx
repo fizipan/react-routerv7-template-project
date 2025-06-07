@@ -1,78 +1,53 @@
-import { configureAuth } from "react-query-auth"
 import { Navigate, useLocation } from "react-router"
-import { z } from "zod"
 
 import { paths } from "@/config/paths"
-import type { AuthResponse, User } from "@/types/api"
+import { Cookie } from "@/utils/storage"
 
-import { api } from "./api-client"
+import { configureAuth } from "./react-query-auth"
 
-// api call definitions for auth (types, schemas, requests):
-// these are not part of features as this is a module shared across features
+import { getUser } from "@/features/auth/api/get-user"
+import { loginWithEmailAndPassword } from "@/features/auth/api/login"
+import { logout } from "@/features/auth/api/logout"
+import type {
+  AuthUserResponse,
+  UsersMeResponse,
+} from "@/features/auth/types/api"
+import type { LoginRequest } from "@/features/auth/types/form"
 
-const getUser = async (): Promise<User> => {
-  const response = await api.get("/auth/me")
-
-  return response.data
+async function handleUserResponse(
+  data: AuthUserResponse
+): Promise<UsersMeResponse> {
+  const { access_token, refresh_token, user } = data.data
+  Cookie.setAccessToken(access_token)
+  Cookie.setRefreshToken(refresh_token)
+  return { data: user }
 }
 
-const logout = (): Promise<void> => {
-  return api.post("/auth/logout")
+async function userFn() {
+  if (Cookie.getAccessToken() || Cookie.getRefreshToken()) {
+    try {
+      const { data } = await getUser()
+      return { data }
+    } catch {
+      Cookie.clearTokens()
+    }
+  }
+  return null
 }
 
-export const loginInputSchema = z.object({
-  email: z.string().min(1, "Required").email("Invalid email"),
-  password: z.string().min(5, "Required"),
-})
-
-export type LoginInput = z.infer<typeof loginInputSchema>
-const loginWithEmailAndPassword = (data: LoginInput): Promise<AuthResponse> => {
-  return api.post("/auth/login", data)
-}
-
-export const registerInputSchema = z
-  .object({
-    email: z.string().min(1, "Required"),
-    firstName: z.string().min(1, "Required"),
-    lastName: z.string().min(1, "Required"),
-    password: z.string().min(5, "Required"),
-  })
-  .and(
-    z
-      .object({
-        teamId: z.string().min(1, "Required"),
-        teamName: z.null().default(null),
-      })
-      .or(
-        z.object({
-          teamName: z.string().min(1, "Required"),
-          teamId: z.null().default(null),
-        })
-      )
-  )
-
-export type RegisterInput = z.infer<typeof registerInputSchema>
-
-const registerWithEmailAndPassword = (
-  data: RegisterInput
-): Promise<AuthResponse> => {
-  return api.post("/auth/register", data)
+async function loginFn(dataForm: LoginRequest): Promise<UsersMeResponse> {
+  const response = await loginWithEmailAndPassword(dataForm)
+  const { data } = await handleUserResponse(response)
+  return { data }
 }
 
 const authConfig = {
-  userFn: getUser,
-  loginFn: async (data: LoginInput) => {
-    const response = await loginWithEmailAndPassword(data)
-    return response.user
-  },
-  registerFn: async (data: RegisterInput) => {
-    const response = await registerWithEmailAndPassword(data)
-    return response.user
-  },
+  userFn,
+  loginFn,
   logoutFn: logout,
 }
 
-export const { useUser, useLogin, useLogout, useRegister, AuthLoader } =
+export const { useUser, useLogin, useLogout, AuthLoader } =
   configureAuth(authConfig)
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {

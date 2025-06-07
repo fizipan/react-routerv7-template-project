@@ -3,7 +3,9 @@ import { Link, useSearchParams } from "react-router"
 import { Button } from "@/components/ui/button"
 import { Form, Input } from "@/components/ui/form"
 import { paths } from "@/config/paths"
-import { useLogin, loginInputSchema } from "@/lib/auth"
+import { useLogin } from "@/lib/auth"
+
+import { loginInputSchema } from "../types/form"
 
 type LoginFormProps = {
   onSuccess: () => void
