@@ -1,4 +1,5 @@
 import { QueryClient, useQueryClient } from "@tanstack/react-query"
+import { NuqsAdapter } from "node_modules/nuqs/dist/_tsup-dts-rollup"
 import { useMemo } from "react"
 import { createBrowserRouter } from "react-router"
 import { RouterProvider } from "react-router/dom"
@@ -58,5 +59,9 @@ export const AppRouter = () => {
 
   const router = useMemo(() => createAppRouter(queryClient), [queryClient])
 
-  return <RouterProvider router={router} />
+  return (
+    <NuqsAdapter>
+      <RouterProvider router={router} />
+    </NuqsAdapter>
+  )
 }
